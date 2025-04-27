@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Barbearia</title>
+</head>
+<body>
+  <div class="base">
+    <a>home</a>
+    <a>horários</a>
+  </div>
+<div class="mask"></div>
+
+  <div class="mae">
+    <div class="caixa1">
+      <img src="./img/vintage-barbershop-logo-template-free-vector-removebg-preview.png" class="logo" />
+      <p class="primeiro-paragrafo">Nova barbearia no seu bairro</p>
+      <p class="segundo-paragrafo">Entre em contato para cortar seu cabelo</p>
+      <button onclick="marquehorario()" href="#agendamento" class="marquehorario">Marque seu horário</button>
+    </div>
+
+    <div class="caixa2">
+      <img src="./img/10404260-design-de-logotipo-de-cavalheiro-barbearia-vintage-vetor-removebg-preview.png" alt="logo2" class="segundo-logo" />
+    </div>
+  </div>
+
+  <!-- Formulário de Agendamento Centralizado -->
+  <div class="agendamento" id="agendamento">
+    <div class="container">
+      <h2>Agendamento</h2>
+
+      <input type="text" id="nome" placeholder="Nome completo" />
+      <input type="text" id="telefone" placeholder="Seu numero">
+      <select id="dia">
+        <option value="Segunda">Segunda-feira</option>
+        <option value="Terça">Terça-feira</option>
+        <option value="Quarta">Quarta-feira</option>
+        <option value="Quinta">Quinta-feira</option>
+        <option value="Sexta">Sexta-feira</option>
+        <option value="Sábado">Sábado</option>
+      </select>
+
+      <select id="hora"></select>
+
+      <button onclick="agendar()">Agendar</button>
+
+      <div id="adminControls">
+        <button onclick="mostrarLista()">Entrar como dono</button>
+      </div>
+
+      <ul id="listaAgendamentos"></ul>
+    </div>
+  </div>
+
+  <div class="zap">
+    <a href="https://wa.me/5583095804087?text=quero%20marcar%20meu%20horario">
+      <img src="./img/WhatsApp-Logo.png" />
+    </a>
+  </div>
+
+  <script>
+    const horaSelect = document.getElementById('hora');
+    const lista = document.getElementById('listaAgendamentos');
+    const nomeInput = document.getElementById('nome');
+    const diaSelect = document.getElementById('dia');
+    const telefoneinput = document.getElementById('telefone')
+    const SENHA_DONO = "2025";
+
+    if (new Date().getDay() === 0) {
+      localStorage.removeItem('agendamentos');
+    }
+
+    for (let h = 9; h <= 18; h++) {
+      const hora = `${h.toString().padStart(2, '0')}:00`;
+      const option = document.createElement('option');
+      option.value = hora;
+      option.textContent = hora;
+      horaSelect.appendChild(option);
+    }
+
+    function renderizarAgendamentos() {
+      lista.innerHTML = '';
+      const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+      if (agendamentos.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'Nenhum agendamento no momento.';
+        lista.appendChild(li);
+        return;
+      }
+      agendamentos.forEach(({ nome, dia, hora, telefone }) => {
+        const li = document.createElement('li');
+        li.textContent = `${dia} - ${hora} - ${nome} - ${telefone}`;
+        lista.appendChild(li);
+      });
+    }
+
+    function agendar() {
+      const nome = nomeInput.value.trim();
+      const dia = diaSelect.value;
+      const hora = horaSelect.value;
+      const telefone = telefoneinput.value.trim();
+
+      if (!nome) {
+        alert('Por favor, digite seu nome completo.');
+        return;
+      }
+
+      if (!telefone) {
+        alert('Por favor, digite seu numero.')
+        return;
+      }
+
+      const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+      const duplicado = agendamentos.some(a => a.dia === dia && a.hora === hora);
+
+      if (duplicado) {
+        alert('Este horário já está agendado.');
+        return;
+      }
+
+      agendamentos.push({ nome, dia, hora, telefone });
+      localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+
+      nomeInput.value = '';
+      renderizarAgendamentos();
+      telefoneinput.value = '';
+      renderizarAgendamentos();
+    }
+
+
+
+
+    function mostrarLista() {
+      const senha = prompt("Digite a senha do dono:");
+      if (senha === SENHA_DONO) {
+        lista.style.display = 'block';
+        renderizarAgendamentos();
+      } else {
+        alert("Senha incorreta. Acesso negado.");
+      }
+    }
+  </script>
+</body>
+
+  <script src="scripts.js"></script>
+
+</html>
