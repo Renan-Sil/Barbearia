@@ -7,7 +7,7 @@
   body {
     font-family: Arial, sans-serif;
     height: auto;
-    background-color: #ffffff;
+    background-color: #808080;
   }
   
   .mae {
@@ -48,7 +48,7 @@
     display: inline-block;
     border-radius: 15px;
     width: 200px;
-    background-color: black;
+    background-color: #808080;
     color: beige;
     border: none;
     height: 40px;
